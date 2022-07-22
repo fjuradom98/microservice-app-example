@@ -1,0 +1,37 @@
+#CREACION DE LA NETWORK
+docker network create example
+
+#USERS-API
+docker run --rm --net example --name users-api -d -p \
+8083:8083 --env JWT_SECRET=PRFT --env SERVER_PORT=8083 java-docker
+
+#AUTH-API
+docker run --rm --net example --name auth-api -d -p \
+8000:8000 --env JWT_SECRET=PRFT --env AUTH_API_PORT=8000 \
+--env USERS_API_ADDRESS=http://users-api:8083 auth-api
+
+
+#REDIS SERVER
+docker run --rm --net example --name redis-db -d -it -p 6379:6379 redis
+
+#LOG MESSAGE PROCESSOR
+docker run --rm --net example --name log-message -d \
+    --env REDIS_CHANNEL=log_channel \
+    --env REDIS_PORT=6379 \
+    --env REDIS_HOST=redis-db \
+    log_message_proccesor
+
+
+#TODOS
+docker run --rm --net example --name todos-api \
+-d -p 8082:8082 --env JWT_SECRET=PRFT --env TODO_API_PORT=8082 \
+--env REDIS_CHANNEL=log_channel --env REDIS_PORT=6379 --env REDIS_HOST=redis-db \
+todos-api
+
+
+#FRONTEND
+docker run --rm --net example --name frontend \
+-d -p 8080:8080    --env AUTH_API_ADDRESS=http://auth-api:8000 \
+--env TODOS_API_ADDRESS=http://todos-api:8082 --env PORT=8080 frontend
+
+
