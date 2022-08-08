@@ -1,0 +1,112 @@
+---
+- hosts: aws_hosts
+  become: true
+  tasks:
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common']
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+- hosts: log_message_processor
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Pull default Docker image log-message-processor
+      shell: |
+        sudo docker pull urregozw/microservice_app:log-message-processor
+    
+    - name: Create network for docker
+      shell: |
+        sudo docker network create example
+
+    - name: Run docker redis-db
+      shell: |
+        sudo docker run --rm --net example --name redis-db -d -it -p 6379:6379 redis
+
+
+    - name: Run docker log-message-processor
+      shell: |
+        sudo docker run --rm --net example --name log-message -d \
+        --env REDIS_CHANNEL=log_channel \
+        --env REDIS_PORT=6379 \
+        --env REDIS_HOST=redis-db \
+        urregozw/microservice_app:log-message-processor
+
+- hosts:  todos_api
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Pull default Docker image todos-api
+      shell: |
+        sudo docker pull urregozw/microservice_app:todos-api
+    
+    - name: Run docker todos-api
+      shell: |
+        sudo docker run --name todos-api \
+        -d -p 8082:8082 --env JWT_SECRET=PRFT --env TODO_API_PORT=8082 \
+        --env REDIS_CHANNEL=log_channel --env REDIS_PORT=6379 --env REDIS_HOST={{ ip_log_message_processor }} \
+        urregozw/microservice_app:todos-api
+
+- hosts: users_api
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Pull default Docker image users-api
+      shell: |
+        sudo docker pull urregozw/microservice_app:users-api
+    
+    - name: Run docker users-api
+      shell: |
+        sudo docker run --name users-api -d -p \
+        8083:8083 --env JWT_SECRET=PRFT --env SERVER_PORT=8083 urregozw/microservice_app:users-api
+
+- hosts: auth_api
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Pull default Docker image auth-api
+      shell: |
+        sudo docker pull urregozw/microservice_app:auth-api
+    
+    - name: Run docker auth-api
+      shell: |
+        sudo docker run --name auth-api -d -p \
+        8000:8000 --env JWT_SECRET=PRFT --env AUTH_API_PORT=8000 \
+        --env USERS_API_ADDRESS=http://{{ ip_users_api }}:8083 urregozw/microservice_app:auth-api
+
+- hosts: frontend
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Pull default Docker image frontend
+      shell: |
+        sudo docker pull urregozw/microservice_app:frontend
+    
+    - name: Run docker frontend
+      shell: |
+        sudo docker run --name frontend -d \
+        -p 8080:8080 \
+        --env AUTH_API_ADDRESS=http://{{ ip_auth_api }}:8000 \
+        --env TODOS_API_ADDRESS=http://{{ ip_todos_api }}:8082 \
+        --env PORT=8080 \
+        urregozw/microservice_app:frontend
