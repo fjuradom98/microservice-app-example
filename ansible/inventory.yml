@@ -2,28 +2,8 @@ all:
   children:
       aws_hosts:
         hosts:
-          frontend:
-            ansible_name: frontend
-            ansible_host: #IP
-            ansible_user: ubuntu
-            ansible_ssh_private_key_file: ~/.ssh/*
           users_api:
             ansible_name: users-api
             ansible_host: 10.1.87.221
             ansible_user: ubuntu
             ansible_ssh_private_key_file: ~/.ssh/rampup-sebastianUrrego.pem
-          todos_api:
-            ansible_name: todos-api
-            ansible_host: #IP
-            ansible_user: ubuntu
-            ansible_ssh_private_key_file: ~/.ssh/*
-          auth_api:
-            ansible_name: auth-api
-            ansible_host: #IP
-            ansible_user: ubuntu
-            ansible_ssh_private_key_file: ~/.ssh/*
-          log_message_processor:
-            ansible_name: log-message-processor
-            ansible_host: #IP
-            ansible_user: ubuntu
-            ansible_ssh_private_key_file: ~/.ssh/*
