@@ -61,22 +61,22 @@ pipeline {
             }
         }
 
-        // stage('Build frontend') {
-        //     steps {
-        //         script {
-        //             sh 'docker build --tag frontend frontend/.'
-        //             sh 'docker tag frontend urregozw/microservice_app:frontend'
-        //         }
-        //     }
-        // }
+        stage('Build frontend') {
+            steps {
+                script {
+                    sh 'docker build --tag frontend frontend/.'
+                    sh 'docker tag frontend urregozw/microservice_app:frontend'
+                }
+            }
+        }
 
-        // stage('Push frontend') {
-        //     steps {
-        //         script {
-        //             sh 'docker push urregozw/microservice_app:frontend'
-        //         }
-        //     }
-        // }
+        stage('Push frontend') {
+            steps {
+                script {
+                    sh 'docker push urregozw/microservice_app:frontend'
+                }
+            }
+        }
 
 
         stage('Build log-message-processor') {
