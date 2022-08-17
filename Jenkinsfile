@@ -11,7 +11,7 @@ pipeline {
 
         stage('Testing code') {
             steps {
-                echo 'Code tested and passed'
+                echo 'sudo docker image ls'
             }
         }
 
@@ -79,40 +79,40 @@ pipeline {
         // }
 
 
-        // stage('Build log-message-processor') {
-        //     steps {
-        //         script {
-        //             sh 'docker build --tag log-message-processor log-message-processor/.'
-        //             sh 'docker tag log-message-processor urregozw/microservice_app:log-message-processor'
-        //         }
-        //     }
-        // }
+        stage('Build log-message-processor') {
+            steps {
+                script {
+                    sh 'docker build --tag log-message-processor log-message-processor/.'
+                    sh 'docker tag log-message-processor urregozw/microservice_app:log-message-processor'
+                }
+            }
+        }
 
-        // stage('Push log-message-processor') {
-        //     steps {
-        //         script {
-        //             sh 'docker push urregozw/microservice_app:log-message-processor'
-        //         }
-        //     }
-        // }
+        stage('Push log-message-processor') {
+            steps {
+                script {
+                    sh 'docker push urregozw/microservice_app:log-message-processor'
+                }
+            }
+        }
 
 
-        // stage('Build users-api') {
-        //     steps {
-        //         script {
-        //             sh 'docker build --tag users-api users-api/.'
-        //             sh 'docker tag users-api urregozw/microservice_app:users-api'
-        //         }
-        //     }
-        // }
+        stage('Build users-api') {
+            steps {
+                script {
+                    sh 'docker build --tag users-api users-api/.'
+                    sh 'docker tag users-api urregozw/microservice_app:users-api'
+                }
+            }
+        }
 
-        // stage('Push users-api') {
-        //     steps {
-        //         script {
-        //             sh 'docker push urregozw/microservice_app:users-api'
-        //         }
-        //     }
-        // }
+        stage('Push users-api') {
+            steps {
+                script {
+                    sh 'docker push urregozw/microservice_app:users-api'
+                }
+            }
+        }
 
         stage('Deploy code') {
             steps {
