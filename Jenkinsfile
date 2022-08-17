@@ -117,11 +117,6 @@ pipeline {
 
         stage('Deploy code') {
             steps {
-                when {
-                    expression {
-                        currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-                    }
-                }
                 sshagent(['rampup']) {
                     sh 'ssh ubuntu@10.1.1.58 ansible-playbook docker.yml -i inventory.yml'
                 }
