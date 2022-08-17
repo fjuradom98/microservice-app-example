@@ -78,9 +78,13 @@ class TodoController {
                     '3': {
                         id: 3,
                         content: "Delete example ones",
+                    },
+                    '4': {
+                        id: 4,
+                        content: "Delete example ones",
                     }
                 },
-                lastInsertedID: 3
+                lastInsertedID: 4
             }
 
             this._setTodoData(userID, data)
