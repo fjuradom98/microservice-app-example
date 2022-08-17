@@ -70,7 +70,6 @@ pipeline {
         //     }
         // }
 
-
         // stage('Push frontend') {
         //     steps {
         //         script {
