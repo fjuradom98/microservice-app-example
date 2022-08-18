@@ -30,7 +30,7 @@ pipeline {
         stage('Build todos-api') {
             steps {
                 script {
-                    sh 'docker build --tag todos-api todos-api/.'
+                    sh 'DOCKER_BUILDKIT=1 docker build --tag todos-api todos-api/.'
                     sh 'docker tag todos-api urregozw/microservice_app:todos-api'
                 }
             }
@@ -47,7 +47,7 @@ pipeline {
         stage('Build auth-api') {
             steps {
                 script {
-                    sh 'docker build --tag auth-api auth-api/.'
+                    sh 'DOCKER_BUILDKIT=1 docker build --tag auth-api auth-api/.'
                     sh 'docker tag auth-api urregozw/microservice_app:auth-api'
                 }
             }
@@ -61,28 +61,11 @@ pipeline {
             }
         }
 
-        stage('Build frontend') {
-            steps {
-                script {
-                    sh 'docker build --tag frontend frontend/.'
-                    sh 'docker tag frontend urregozw/microservice_app:frontend'
-                }
-            }
-        }
-
-        stage('Push frontend') {
-            steps {
-                script {
-                    sh 'docker push urregozw/microservice_app:frontend'
-                }
-            }
-        }
-
 
         stage('Build log-message-processor') {
             steps {
                 script {
-                    sh 'docker build --tag log-message-processor log-message-processor/.'
+                    sh 'DOCKER_BUILDKIT=1 docker build --tag log-message-processor log-message-processor/.'
                     sh 'docker tag log-message-processor urregozw/microservice_app:log-message-processor'
                 }
             }
@@ -100,7 +83,7 @@ pipeline {
         stage('Build users-api') {
             steps {
                 script {
-                    sh 'docker build --tag users-api users-api/.'
+                    sh 'DOCKER_BUILDKIT=1 docker build --tag users-api users-api/.'
                     sh 'docker tag users-api urregozw/microservice_app:users-api'
                 }
             }
@@ -113,6 +96,24 @@ pipeline {
                 }
             }
         }
+
+        // stage('Build frontend') {
+        //     steps {
+        //         script {
+        //             sh 'DOCKER_BUILDKIT=1 docker build --tag frontend frontend/.'
+        //             sh 'docker tag frontend urregozw/microservice_app:frontend'
+        //         }
+        //     }
+        // }
+
+        // stage('Push frontend') {
+        //     steps {
+        //         script {
+        //             sh 'docker push urregozw/microservice_app:frontend'
+        //         }
+        //     }
+        // }
+
 
         stage('Deploy code') {
             steps {

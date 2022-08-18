@@ -81,11 +81,11 @@ class TodoController {
                     },
                     '4': {
                         id: 4,
-                        content: "Delete example ones",
+                        content: "Tarea con Felipe",
                     },
                     '5': {
                         id: 5,
-                        content: "Felipe Task",
+                        content: "Tarea con Sebastián",
                     }
                 },
                 lastInsertedID: 5
